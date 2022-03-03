@@ -1,4 +1,3 @@
-from random import seed
 import numpy as np
 from lib.naivebayes import _NaiveBayesClassifier
 from dotenv import load_dotenv
