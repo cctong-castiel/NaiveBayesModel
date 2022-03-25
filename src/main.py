@@ -1,4 +1,8 @@
 import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from sklearn.naive_bayes import MultinomialNB
 from lib.naivebayes import _NaiveBayesClassifier
 from dotenv import load_dotenv
 import os
@@ -9,34 +13,34 @@ np.random.seed(seed)
 
 def main():
 
-    # prepare demo dataset
-    X_train = np.array([[3.393533211,2.331273381],
-        [3.110073483,1.781539638],
-        [1.343808831,3.368360954],
-        [3.582294042,4.67917911],
-        [2.280362439,2.866990263],
-        [7.423436942,4.696522875],
-        [5.745051997,3.533989803],
-        [9.172168622,2.511101045],
-        [7.792783481,3.424088941],
-        [7.939820817,0.791637231],
-        [3.662294042,4.66667911]])
-    y_train = np.array([0,0,0,0,0,1,1,1,1,1,0])
+    # load_data
+    X, y = load_breast_cancer(return_X_y=True)
 
-    
-    X_test = np.random.randint(1, 10, (5,2))
+    # train test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=seed)
 
     # train model
-    nb_clf = _NaiveBayesClassifier()
-    nb_clf.fit(X_train, y_train)
+    nb_skl = MultinomialNB()
+    nb_ctm = _NaiveBayesClassifier()
+
+    # fit
+    nb_skl.fit(X_train, y_train)
+    nb_ctm.fit(X_train, y_train)
 
     # predict
-    y_pred = nb_clf.predict(X_test)
+    y_pred_skl = nb_skl.predict(X_test)
+    y_pred_ctm = nb_ctm.predict(X_test)
 
     # predict proba
-    y_pred_proba = nb_clf.predict_proba(X_test)
+    y_pred_proba_skl = nb_skl.predict_proba(X_test)
+    y_pred_proba_ctm = nb_ctm.predict_proba(X_test)
 
-    print(f"y_pred: {y_pred} \ny_pred_proba: {y_pred_proba}")
+    print(f"y_pred_proba_skl: {y_pred_proba_skl}")
+    print(f"y_pred_proba_ctm: {y_pred_proba_ctm}")
+
+    # classification report
+    print(f"classification report of sklearn naive bayes: \n{classification_report(y_test, y_pred_skl)}\n")
+    print(f"classification report of custom naive bayes: \n{classification_report(y_test, y_pred_ctm)}\n")
 
 
 if __name__ == "__main__":
